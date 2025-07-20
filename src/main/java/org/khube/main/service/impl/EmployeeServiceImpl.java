@@ -11,7 +11,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeDao employeeDao;
 
-    @Autowired
     public EmployeeServiceImpl(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
     }
