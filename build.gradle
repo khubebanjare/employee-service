@@ -2,10 +2,46 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.sonarqube' version '4.4.1.3373'
+	id 'jacoco'
 }
 
 group = 'org.khube'
 version = '0.0.1-SNAPSHOT'
+
+sonarqube {
+	properties {
+		property 'sonar.projectKey', 'employee-service'
+		property 'sonar.projectName', 'employee-service'
+		property 'sonar.host.url', 'http://localhost:9000' // Your SonarQube server URL
+		property 'sonar.login', 'squ_51678fa10c9b81df956ee9ec9eb994e59ae38255' // The token generated in SonarQube
+		property 'sonar.sources', 'src/main/java'
+		property 'sonar.tests', 'src/test/java'
+		property 'sonar.java.binaries', 'build/classes' // Adjust if needed
+		property 'sonar.sourceEncoding', 'UTF-8'
+	}
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, exclude: [
+							'**/com/in/TestServiceApplication.class'
+					])
+				})
+		)
+	}
+}
 
 java {
 	toolchain {

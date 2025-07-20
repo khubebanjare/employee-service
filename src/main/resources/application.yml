@@ -31,3 +31,19 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+# SonarQube configuration
+sonar:
+  enabled: true
+  host:
+    url: http://localhost:9000
+  projectKey: employee-service
+  projectName: employee-service
+  login: squ_51678fa10c9b81df956ee9ec9eb994e59ae38255
+  sources: src/main/java
+  tests: src/test/java
+  java:
+    binaries: build/classes
+  sourceEncoding: UTF-8
+
