@@ -11,16 +11,17 @@ version = '0.0.1-SNAPSHOT'
 
 sonarqube {
 	properties {
-		property 'sonar.projectKey', 'employee-service'
-		property 'sonar.projectName', 'employee-service'
-		property 'sonar.host.url', 'http://localhost:9000' // Your SonarQube server URL
-		property 'sonar.login', 'squ_51678fa10c9b81df956ee9ec9eb994e59ae38255' // The token generated in SonarQube
-		property 'sonar.sources', 'src/main/java'
-		property 'sonar.tests', 'src/test/java'
-		property 'sonar.java.binaries', 'build/classes' // Adjust if needed
-		property 'sonar.sourceEncoding', 'UTF-8'
+		property "sonar.projectKey", project.findProperty("sonar.projectKey")
+		property "sonar.projectName", project.findProperty("sonar.projectName")
+		property "sonar.host.url", project.findProperty("sonar.host.url")
+		property "sonar.token", project.findProperty("sonar.token")
+		property "sonar.sources", project.findProperty("sonar.sources")
+		property "sonar.tests", project.findProperty("sonar.tests")
+		property "sonar.java.binaries", project.findProperty("sonar.java.binaries")
+		property "sonar.sourceEncoding", project.findProperty("sonar.sourceEncoding")
 	}
 }
+
 
 jacoco {
 	toolVersion = "0.8.11"
