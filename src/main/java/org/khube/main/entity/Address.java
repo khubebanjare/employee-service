@@ -1,4 +1,4 @@
-package org.khube.main.entity.secondary;
+package org.khube.main.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,8 +1,9 @@
 package org.khube.main.service;
 
-import org.khube.main.entity.Employee;
+import org.khube.main.dto.request.EmployeeRequestDto;
+import org.khube.main.dto.response.EmployeeResponseDto;
 
 public interface EmployeeService {
 
-    Employee createEmployee(Employee employee);
+    EmployeeResponseDto createEmployee(EmployeeRequestDto employee);
 }

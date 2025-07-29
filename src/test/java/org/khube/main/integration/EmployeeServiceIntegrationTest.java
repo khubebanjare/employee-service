@@ -5,7 +5,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.khube.main.entity.Employee;
+import org.khube.main.dto.request.EmployeeRequestDto;
+import org.khube.main.dto.response.EmployeeResponseDto;
 import org.khube.main.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,25 +24,25 @@ class EmployeeServiceIntegrationTest {
     @Test
     @Order(1)
     void testSaveEmployee() {
-        Employee createEmployee = createNewEmployee();
+        EmployeeRequestDto createdEmployee = createNewEmployee();
 
-        Employee savedEmployee = employeeService.createEmployee(createEmployee);
+        EmployeeResponseDto createdEmployeeResponseDto = employeeService.createEmployee(createdEmployee);
 
-        assertNotNull(savedEmployee);
-        assertNotNull(savedEmployee.getEmpId());
-        assertEquals("Khube", savedEmployee.getFirstName());
-        assertEquals("Banjare", savedEmployee.getLastName());
-        assertEquals(30, savedEmployee.getAge());
-        assertEquals(50000.0, savedEmployee.getSal());
+        assertNotNull(createdEmployeeResponseDto);
+        assertNotNull(createdEmployeeResponseDto.getEmpId());
+        assertEquals("Khube", createdEmployeeResponseDto.getFirstName());
+        assertEquals("Banjare", createdEmployeeResponseDto.getLastName());
+        assertEquals(30, createdEmployeeResponseDto.getAge());
+        assertEquals(50000.0, createdEmployeeResponseDto.getSal());
 
     }
 
-    private Employee createNewEmployee() {
-        Employee employee = new Employee();
-        employee.setFirstName("Khube");
-        employee.setLastName("Banjare");
-        employee.setAge(30);
-        employee.setSal(50000.0);
-        return employee;
+    private EmployeeRequestDto createNewEmployee() {
+        EmployeeRequestDto employeeRequestDto = new EmployeeRequestDto();
+        employeeRequestDto.setFirstName("Khube");
+        employeeRequestDto.setLastName("Banjare");
+        employeeRequestDto.setAge(30);
+        employeeRequestDto.setSal(50000.0);
+        return employeeRequestDto;
     }
 }

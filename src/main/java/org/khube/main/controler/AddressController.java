@@ -1,6 +1,6 @@
 package org.khube.main.controler;
 
-import org.khube.main.entity.secondary.Address;
+import org.khube.main.entity.Address;
 import org.khube.main.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

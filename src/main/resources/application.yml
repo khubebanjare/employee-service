@@ -7,6 +7,13 @@ spring:
   main:
     allow-bean-definition-overriding: false
 
+# Kafka configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      retries: 3
+      acks: all
+
 # Database configuration
   datasource:
     url: jdbc:mysql://localhost:3306/employee_service_db

@@ -29,7 +29,6 @@ class EmployeeRepositoryTest {
         assertEquals("Banjare", result.getLastName());
         assertEquals(30, result.getAge());
         assertEquals(50000.0, result.getSal());
-
     }
 
     @Test
@@ -39,11 +38,11 @@ class EmployeeRepositoryTest {
         Employee createdEmployee = employeeRepository.save(employee);
 
         Optional<Employee> foundEmployee = employeeRepository.findById(createdEmployee.getEmpId());
+
         assertTrue(foundEmployee.isPresent());
         assertEquals("Khube", foundEmployee.get().getFirstName());
         assertEquals("Banjare", foundEmployee.get().getLastName());
         assertEquals(30, foundEmployee.get().getAge());
         assertEquals(50000.0, foundEmployee.get().getSal());
-
     }
 }
