@@ -2,8 +2,11 @@ package org.khube.main.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.khube.main.dao.EmployeeDao;
+import org.khube.main.dto.request.EmployeeRequestDto;
+import org.khube.main.dto.response.EmployeeResponseDto;
 import org.khube.main.entity.Employee;
+import org.khube.main.mapper.EmployeeMapper;
+import org.khube.main.repository.primary.EmployeeRepository;
 import org.khube.main.service.impl.EmployeeServiceImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,19 +21,39 @@ import static org.mockito.Mockito.*;
 class EmployeeServiceTest {
 
     @Mock
-    private EmployeeDao employeeDao;
+    private EmployeeRepository employeeRepository;
+
+    @Mock
+    private EmployeeMapper employeeMapper;
 
     @InjectMocks
     private EmployeeServiceImpl employeeService;
 
+
     @Test
     void createEmployeeTest() {
-        Employee employee = new Employee(null, "Khube", "Banjare", 30, 50000.0);
-        Employee createdEmployee = new Employee(1L, "Khube", "Banjare", 30, 50000.0);
+        EmployeeRequestDto createdEmployee = createNewEmployee();
 
-        when(employeeDao.createEmployee(any(Employee.class))).thenReturn(createdEmployee);
+        // Prepare the mocked entity
+        Employee mockEntity = new Employee();
+        mockEntity.setFirstName("Khube");
+        mockEntity.setLastName("Banjare");
+        mockEntity.setAge(30);
+        mockEntity.setSal(50000.0);
 
-        Employee result = employeeService.createEmployee(employee);
+        // Prepare the mocked response DTO
+        EmployeeResponseDto mockResponse = new EmployeeResponseDto();
+        mockResponse.setFirstName("Khube");
+        mockResponse.setLastName("Banjare");
+        mockResponse.setAge(30);
+        mockResponse.setSal(50000.0);
+
+        // Mock mapper calls
+        when(employeeMapper.mapToEntity(createdEmployee)).thenReturn(mockEntity);
+        when(employeeRepository.save(any(Employee.class))).thenReturn(mockEntity);
+        when(employeeMapper.mapToDto(mockEntity)).thenReturn(mockResponse);
+
+        EmployeeResponseDto result = employeeService.createEmployee(createdEmployee);
 
         assertNotNull(result);
         assertEquals("Khube", result.getFirstName());
@@ -38,6 +61,15 @@ class EmployeeServiceTest {
         assertEquals(30, result.getAge());
         assertEquals(50000.0, result.getSal());
 
-        verify(employeeDao, times(1)).createEmployee(employee);
+        verify(employeeRepository, times(1)).save(mockEntity);
+    }
+
+    private EmployeeRequestDto createNewEmployee() {
+        EmployeeRequestDto employeeRequestDto = new EmployeeRequestDto();
+        employeeRequestDto.setFirstName("Khube");
+        employeeRequestDto.setLastName("Banjare");
+        employeeRequestDto.setAge(30);
+        employeeRequestDto.setSal(50000.0);
+        return employeeRequestDto;
     }
 }

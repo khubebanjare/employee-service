@@ -1,0 +1,81 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-dev
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MYSQL_DATABASE: employee_service_db
+    volumes:
+        - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+
+  kafka:
+    image: bitnami/kafka:3.9.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - backend
+    environment:
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_KRAFT_CLUSTER_ID=xyzzy-kraft-cluster
+    volumes:
+      - kafka_data:/bitnami/kafka
+
+  sonarqube:
+    image: sonarqube:9.9-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+
+  employee-service:
+    image: khube/employee-service:1 # If local, you'll use `minikube image load` first
+    build: .
+    container_name: employee-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      sonarqube:
+        condition: service_started
+    ports:
+      - "9090:9090"
+    networks:
+      - backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql
+      KAFKA_HOST: kafka
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/employee_service_db
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SONARQUBE_URL: ${SPRING_SONARQUBE_URL}
+      SPRING_SONARQUBE_TOKEN: ${SPRING_SONARQUBE_TOKEN}
+
+volumes:
+  db-data:
+  kafka_data:
+
+networks:
+  backend:
+    driver: bridge

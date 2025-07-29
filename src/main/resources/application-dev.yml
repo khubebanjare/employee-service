@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:mysql-dev}:3306/employee_service_db
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
