@@ -1,13 +1,13 @@
 package org.khube.main.service;
 
-import org.khube.main.dto.request.EmployeeRequestDto;
-import org.khube.main.dto.response.EmployeeResponseDto;
+import org.khube.main.dto.EmployeeCreateDto;
+import org.khube.main.dto.EmployeeDto;
 
 import java.util.Optional;
 
 public interface EmployeeService {
 
-    EmployeeResponseDto createEmployee(EmployeeRequestDto employee);
+    EmployeeDto createEmployee(EmployeeCreateDto employeeCreateDto);
 
-    Optional<EmployeeResponseDto> getEmployeeByEmpId(Long empId);
+    Optional<EmployeeDto> getEmployeeByEmpId(Long empId);
 }

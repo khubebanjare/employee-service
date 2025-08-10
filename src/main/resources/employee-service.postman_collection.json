@@ -1,0 +1,42 @@
+{
+  "info": {
+    "name": "Employee Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Employee",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"mobile\": \"9876543210\",\n    \"departmentId\": 1\n}"
+        },
+        "url": { "raw": "http://localhost:8082/api/employees", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["api", "employees"] }
+      }
+    },
+    {
+      "name": "Get All Employees",
+      "request": { "method": "GET", "url": { "raw": "http://localhost:8082/api/employees", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["api", "employees"] } }
+    },
+    {
+      "name": "Get Employee By ID",
+      "request": { "method": "GET", "url": { "raw": "http://localhost:8082/api/employees/1", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["api", "employees", "1"] } }
+    },
+    {
+      "name": "Update Employee",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"jane.smith@example.com\",\n    \"mobile\": \"9876543211\",\n    \"departmentId\": 1\n}" },
+        "url": { "raw": "http://localhost:8082/api/employees/1", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["api", "employees", "1"] }
+      }
+    },
+    {
+      "name": "Delete Employee",
+      "request": { "method": "DELETE", "url": { "raw": "http://localhost:8082/api/employees/1", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["api", "employees", "1"] } }
+    }
+  ]
+}
+

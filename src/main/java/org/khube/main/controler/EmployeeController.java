@@ -1,7 +1,8 @@
 package org.khube.main.controler;
 
-import org.khube.main.dto.request.EmployeeRequestDto;
-import org.khube.main.dto.response.EmployeeResponseDto;
+import jakarta.validation.Valid;
+import org.khube.main.dto.EmployeeCreateDto;
+import org.khube.main.dto.EmployeeDto;
 import org.khube.main.service.EmployeeService;
 import org.khube.main.service.kafka.KafkaEmployeeProducerPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping("/api/employees")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -24,13 +25,19 @@ public class EmployeeController {
         this.kafkaEmployeeProducerPublisher = kafkaEmployeeProducerPublisher;
     }
 
+    /**
+     * Creates a new employee and publishes the employee data to Kafka.
+     *
+     * @param employeeDto the employee data to be created
+     * @return ResponseEntity with the created EmployeeDto and HTTP status
+     */
     @PostMapping("/create")
-    public ResponseEntity<EmployeeResponseDto> createEmployee(@RequestBody EmployeeRequestDto employeeDto) {
+    public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeCreateDto employeeDto) {
         try {
             if (employeeDto == null) {
                 throw new IllegalArgumentException("Employee must not be null");
             }
-            EmployeeResponseDto createdEmployee = employeeService.createEmployee(employeeDto);
+            EmployeeDto createdEmployee = employeeService.createEmployee(employeeDto);
             if (createdEmployee != null) {
                 kafkaEmployeeProducerPublisher.publishToKafkaTopic(createdEmployee);
             }
@@ -43,10 +50,10 @@ public class EmployeeController {
         }
     }
 
-    @GetMapping("/findById/{empId}")
-    public ResponseEntity<EmployeeResponseDto> fetchEmployeeById(@PathVariable("empId") Long empId) {
+    @GetMapping("/fetch/{empId}")
+    public ResponseEntity<EmployeeDto> fetchEmployeeById(@PathVariable("empId") Long empId) {
         try {
-            Optional<EmployeeResponseDto> optionalEmployee = employeeService.getEmployeeByEmpId(empId);
+            Optional<EmployeeDto> optionalEmployee = employeeService.getEmployeeByEmpId(empId);
             if (optionalEmployee.isPresent()) {
                 return optionalEmployee
                         .map(employee -> new ResponseEntity<>(employee, HttpStatus.OK))

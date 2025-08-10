@@ -1,42 +1,39 @@
 package org.khube.main.service.kafka;
 
-import org.khube.main.dto.response.EmployeeResponseDto;
+import org.khube.main.dto.EmployeeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
+import static org.khube.main.constants.EmployeeConstants.SEND_TO_KAFKA_OUT_0;
 
-//@ConfigurationProperties(prefix = "kafka.topic")
 @Service
 public class KafkaEmployeeProducerPublisher {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    private final StreamBridge streamBridge;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaEmployeeProducerPublisher.class);
 
-    @Value("${kafka.topic.employee}")
-    private String employeeTopic;
-
     @Autowired
-    public KafkaEmployeeProducerPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    public KafkaEmployeeProducerPublisher(StreamBridge streamBridge) {
+        this.streamBridge = streamBridge;
     }
 
-    public void publishToKafkaTopic(EmployeeResponseDto employeeDto) {
-        CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(employeeTopic, employeeDto);
-        future.whenComplete((result, ex) -> {
-            if (ex != null) {
-                LOGGER.error("Error sending Employee Data to Kafka: {}",  ex.getMessage());
+    /**
+     * Publishes the EmployeeDto to the Kafka topic using StreamBridge.
+     *
+     * @param employeeDto the EmployeeDto to be published
+     */
+    public void publishToKafkaTopic(EmployeeDto employeeDto) {
+        boolean kafkaFlag = streamBridge.send(SEND_TO_KAFKA_OUT_0, employeeDto);
+            if (kafkaFlag) {
+                LOGGER.info("Employee Data sent successfully to Kafka topic: {}", employeeDto);
             } else {
-                LOGGER.info("Employee Data sent successfully to Kafka topic: {}, offset: {}, partition: {}, data: {}", employeeTopic, result.getRecordMetadata().offset(), result.getRecordMetadata().partition(), employeeDto);
+                LOGGER.error("Error sending Employee Data to Kafka");
             }
-        });
 
     }
 }
